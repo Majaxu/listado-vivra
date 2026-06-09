@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotizador · VIVRA Güemes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF6F1; --surface:#F4ECE4; --surface-2:#FBF7F2;
+  --ink:#232A33; --muted:#6E6862;
+  --accent:#C24B38; --accent-deep:#A8392A;
+  --sold:#D6362A;
+  --line:rgba(35,42,51,.10); --line-strong:rgba(35,42,51,.18);
+  --radius:20px; --radius-sm:12px; --shadow:0 18px 50px -28px rgba(35,42,51,.45);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+
+header.bar{position:sticky;top:0;z-index:30;background:rgba(250,246,241,.82);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
+.brand{display:flex;flex-direction:column;line-height:.92;text-decoration:none}
+.brand .v{font-family:'Montserrat';font-weight:800;font-size:22px;letter-spacing:.34em;color:var(--ink)}
+.brand .g{font-family:'Montserrat';font-weight:600;font-size:9.5px;letter-spacing:.55em;color:var(--accent);padding-left:.34em}
+.bar .role{font-size:12.5px;color:var(--muted)}
+
+.intro{padding:46px 0 8px}
+.eyebrow{font-family:'Montserrat';font-weight:600;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--accent)}
+.intro h1{font-family:'Montserrat';font-weight:700;font-size:clamp(28px,4.4vw,42px);margin:14px 0 10px;letter-spacing:-.01em}
+.intro p{color:var(--muted);max-width:54ch;margin:0;font-size:15.5px}
+
+/* layout: formulario (vertical) + panel de planos */
+.layout{display:grid;grid-template-columns:1.05fr 1fr;gap:22px;padding:30px 0 64px;align-items:start}
+.formcol{display:flex;flex-direction:column;gap:22px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+
+.card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}
+.card .step{display:flex;align-items:center;gap:10px;margin:0 0 18px}
+.card .step .n{font-family:'Montserrat';font-weight:700;font-size:12px;color:#fff;background:var(--accent);width:24px;height:24px;border-radius:50%;display:grid;place-items:center}
+.card .step h2{font-family:'Montserrat';font-weight:600;font-size:16px;margin:0}
+
+.filters{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:18px}
+.filters .fhead{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;cursor:pointer;padding:2px 0;font-family:inherit;color:var(--ink)}
+.filters .fhead .t{font-family:'Montserrat';font-weight:600;font-size:13px;margin-right:auto}
+.filters .fhead .count{font-size:11.5px;color:var(--accent-deep);font-weight:600}
+.filters .fhead .chev{width:16px;height:16px;color:var(--muted);transition:transform .18s}
+.filters .fhead[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.filters .fbody{margin-top:12px}
+.filters .fbody[hidden]{display:none}
+.frow1{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.frow1 .fclear{margin-left:auto}
+.fgroup{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.fgroup .glab{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;min-width:64px}
+.fchips{display:flex;flex-wrap:wrap;gap:5px}
+.fchip{font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line-strong);cursor:pointer;transition:all .14s;user-select:none}
+.fchip:hover{border-color:var(--accent)}
+.fchip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.fchip.toggle.active{background:var(--accent-deep);border-color:var(--accent-deep)}
+.fclear{font-size:11.5px;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline;padding:0}
+.fclear:hover{color:var(--accent)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{margin-bottom:18px}
+.field:last-child{margin-bottom:0}
+label{display:block;font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:7px}
+.hint{font-size:11.5px;color:var(--muted);margin-top:6px}
+select,input[type=number]{width:100%;font-family:'Inter';font-size:15px;color:var(--ink);background:#fff;border:1px solid var(--line-strong);border-radius:var(--radius-sm);padding:12px 14px;appearance:none;outline:none;transition:border-color .15s,box-shadow .15s}
+select:focus,input[type=number]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(194,75,56,.15)}
+select:disabled{background:#f1ece6;color:#aaa;cursor:not-allowed}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236E6862' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+
+.unit-row{display:flex;gap:8px}
+.unit-row select{flex:1}
+.btn-go{flex:none;width:48px;border:1px solid var(--accent);border-radius:var(--radius-sm);background:var(--accent);color:#fff;cursor:pointer;display:grid;place-items:center;transition:filter .14s}
+.btn-go:hover{filter:brightness(1.07)}
+.btn-go:disabled{background:#e7ded6;border-color:var(--line-strong);color:#bbb;cursor:not-allowed}
+.btn-go svg{width:20px;height:20px}
+
+.alert{display:none;margin-top:8px;font-size:12px;color:var(--sold);font-weight:600}
+.alert.on{display:block}
+
+.unit{margin-top:22px;border-top:1px solid var(--line);padding-top:20px;min-height:90px}
+.placeholder{color:var(--muted);font-size:14px;text-align:center;padding:20px 10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px;background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.chip.accent{background:rgba(194,75,56,.10);color:var(--accent-deep);border-color:rgba(194,75,56,.22)}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px;margin-bottom:18px}
+.spec .k{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.spec .val{font-family:'Montserrat';font-weight:600;font-size:18px}
+.price-line{display:flex;align-items:baseline;gap:10px}
+.price-line .cur{font-family:'Montserrat';font-weight:600;font-size:15px;color:var(--muted)}
+.price-line .amt{font-family:'Montserrat';font-weight:800;font-size:34px;letter-spacing:-.01em}
+
+/* sello NO DISPONIBLE + mini SOLD */
+.stamp-group{display:inline-flex;align-items:center;gap:14px;animation:stamp .42s cubic-bezier(.2,1.25,.5,1) both}
+.stamp{display:inline-block;font-family:'Montserrat';font-weight:800;font-size:clamp(18px,4.2vw,24px);letter-spacing:.05em;color:var(--sold);text-transform:uppercase;background:#fff;border:4px solid var(--sold);border-radius:8px;padding:9px 16px;box-shadow:inset 0 0 0 2px #fff;transform:rotate(-3deg)}
+.sold-mini{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:var(--sold);border:3px solid var(--sold);box-shadow:inset 0 0 0 2px #fff,0 0 0 1px var(--sold);font-family:'Montserrat';font-weight:800;font-size:14px;letter-spacing:.08em;transform:rotate(9deg);flex:none}
+@keyframes stamp{0%{transform:scale(1.6);opacity:0}55%{opacity:1}100%{transform:scale(1);opacity:1}}
+
+.line{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px}
+.line .lab{color:var(--muted)}
+.line .num{font-family:'Montserrat';font-weight:600;font-size:15px;font-variant-numeric:tabular-nums}
+.hero-cuota{margin-top:18px;background:var(--ink);color:#fff;border-radius:var(--radius-sm);padding:20px 22px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hero-cuota .lab{font-size:12px;letter-spacing:.04em;opacity:.8}
+.hero-cuota .lab b{display:block;font-size:15px;letter-spacing:0;opacity:1;font-weight:600;margin-top:2px}
+.hero-cuota .big{font-family:'Montserrat';font-weight:800;font-size:clamp(24px,4.5vw,32px);font-variant-numeric:tabular-nums;text-align:right}
+.hero-cuota .big small{display:block;font-size:11px;font-weight:500;opacity:.65;letter-spacing:.04em}
+.deliver{display:inline-flex;align-items:flex-start;gap:7px;margin-top:14px;font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px 13px;line-height:1.45}
+.deliver b{color:var(--ink);font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:5px;flex:none}
+.plan-note{display:none;color:var(--muted);font-size:13.5px;padding:8px 2px 2px}
+.plan-note.on{display:block}
+
+/* panel de planos */
+.planscard .placeholder{padding:48px 16px}
+.plan-fig{margin-bottom:20px}
+.plan-fig:last-child{margin-bottom:0}
+.plan-cap{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.plan-cap .t{font-family:'Montserrat';font-weight:600;font-size:13px}
+.zoom{font-size:11.5px;color:var(--accent);background:none;border:none;cursor:pointer;display:inline-flex;gap:5px;align-items:center;font-weight:600}
+.zoom svg{width:14px;height:14px}
+.plan-img{position:relative;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:#fff;cursor:zoom-in}
+.plan-img img{display:block;width:100%}
+.plan-ph{aspect-ratio:4/3;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:12.5px;padding:18px;
+  background:linear-gradient(rgba(35,42,51,.045) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,rgba(35,42,51,.045) 1px,transparent 1px) 0 0/22px 22px,#fbfaf8}
+.plan-ph b{display:block;font-family:'Montserrat';color:var(--ink);font-size:14px;margin-bottom:3px}
+
+/* lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(22,18,15,.85);display:none;place-items:center;z-index:60;padding:28px}
+.lightbox.on{display:grid}
+.lb-inner{max-width:min(94vw,1000px);max-height:90vh;background:#fff;border-radius:14px;overflow:auto}
+.lb-inner img{display:block;width:100%}
+.lb-ph{width:min(90vw,860px);aspect-ratio:4/3;display:grid;place-items:center;text-align:center;color:var(--muted);
+  background:linear-gradient(rgba(35,42,51,.05) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,rgba(35,42,51,.05) 1px,transparent 1px) 0 0/28px 28px,#fbfaf8}
+.lb-ph b{display:block;font-family:'Montserrat';color:var(--ink);font-size:18px;margin-bottom:4px}
+.lb-close{position:fixed;top:18px;right:24px;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,.15);color:#fff;font-size:24px;cursor:pointer;display:grid;place-items:center}
+.lb-close:hover{background:rgba(255,255,255,.28)}
+
+footer{border-top:1px solid var(--line);padding:26px 0 50px;color:var(--muted);font-size:12px}
+footer .wrap{display:flex;flex-direction:column;gap:6px}
+footer b{color:var(--ink)}
+/* forma de pago */
+.paytabs{display:flex;gap:6px;margin-bottom:18px;background:var(--surface);padding:4px;border-radius:999px;border:1px solid var(--line)}
+.paytab{flex:1;border:none;background:none;cursor:pointer;font-family:'Inter';font-size:12.5px;font-weight:600;color:var(--muted);padding:9px 8px;border-radius:999px;transition:all .15s}
+.paytab.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+[hidden]{display:none!important}
+/* candado */
+.gate{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;padding:24px}
+.gate-box{max-width:340px;width:100%;text-align:center;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:34px 28px;box-shadow:var(--shadow)}
+.gate-box .gv{font-family:'Montserrat';font-weight:800;font-size:24px;letter-spacing:.32em;color:var(--ink)}
+.gate-box .gg{font-family:'Montserrat';font-weight:600;font-size:10px;letter-spacing:.5em;color:var(--accent);margin-bottom:12px}
+.gate-box .gate-tag{font-family:'Montserrat';font-weight:600;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 12px;display:inline-block;margin-bottom:16px}
+.gate-box p{font-size:13.5px;color:var(--muted);margin:0 0 16px}
+.gate-box input{width:100%;font-size:15px;padding:12px 14px;border:1px solid var(--line-strong);border-radius:var(--radius-sm);outline:none;text-align:center;margin-bottom:12px}
+.gate-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(194,75,56,.15)}
+.gate-box button{width:100%;border:none;background:var(--accent);color:#fff;font-family:'Montserrat';font-weight:600;font-size:14px;padding:12px;border-radius:var(--radius-sm);cursor:pointer}
+.gate-err{color:var(--sold);font-size:12px;font-weight:600;margin-top:10px;min-height:14px}
+.gate-load{font-size:13px;color:var(--muted)}
+/* --- pulido de marca Vivra --- */
+header.bar{border-top:3px solid var(--accent)}
+.brand .v{letter-spacing:.38em}
+.intro{padding:54px 0 6px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--accent);display:inline-block}
+.intro h1{letter-spacing:-.02em;font-weight:700}
+.intro p{font-size:16px}
+.card{box-shadow:0 22px 60px -34px rgba(35,42,51,.5)}
+.price-line .amt{font-size:36px}
+.hero-cuota{background:linear-gradient(180deg,#2b333d,#232A33);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
+.btn-go,.gate-box button{box-shadow:0 8px 20px -10px rgba(194,75,56,.65)}
+.paytab.active{color:var(--accent-deep)}
+.deliver{border-radius:12px}
+footer{background:var(--surface)}
+select:focus-visible,input:focus-visible,button:focus-visible,.fchip:focus-visible,.paytab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <div class="gv">VIVRA</div><div class="gg">GÜEMES</div>
+    <div class="gate-tag">Acceso privado</div>
+    <p>Ingresá la contraseña para ver el cotizador.</p>
+    <input type="password" id="gatePass" placeholder="Contraseña" autocomplete="off" autofocus>
+    <button id="gateBtn">Entrar</button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="https://www.vivraguemes.com.ar" target="_blank" rel="noopener"><span class="v">VIVRA</span><span class="g">GÜEMES</span></a>
+    <div class="role">Cotizador de unidades</div>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="wrap">
+    <div class="eyebrow">Av. Pueyrredón 377 · Güemes</div>
+    <h1>Cotizá tu unidad</h1>
+    <p>Filtrá, elegí tu unidad y cotizá en cuotas o al contado.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="layout">
+
+    <!-- ====== Columna formulario (vertical) ====== -->
+    <div class="formcol">
+
+      <div class="card">
+        <div class="step"><span class="n">1</span><h2>Elegí tu unidad</h2></div>
+        <div class="filters">
+          <button class="fhead" id="filterToggle" aria-expanded="false">
+            <span class="t">Filtros</span>
+            <span class="count" id="count">—</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="fbody" id="filterBody" hidden>
+            <div class="frow1">
+              <span class="fchip toggle" id="soloDisp">Solo disponibles</span>
+              <button class="fclear" id="clearF">Limpiar</button>
+            </div>
+            <div id="filterGroups"></div>
+          </div>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label for="piso">Piso</label>
+            <select id="piso"><option value="">Seleccioná…</option></select>
+          </div>
+          <div class="field">
+            <label for="unidad">Unidad</label>
+            <div class="unit-row">
+              <select id="unidad" disabled><option value="">—</option></select>
+              <button class="btn-go" id="go" disabled title="Cotizar unidad" aria-label="Cotizar unidad">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="unit" id="unit">
+          <div class="placeholder" id="placeholder">Elegí un piso y una unidad, y tocá la flecha para cotizar.</div>
+          <div id="unitDetail" style="display:none">
+            <div class="chips" id="chips"></div>
+            <div class="specs" id="specs"></div>
+            <div class="price-line" id="priceLine"><span class="cur">USD</span><span class="amt" id="precio">—</span></div>
+            <div id="stampWrap" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="step"><span class="n">2</span><h2>Forma de pago</h2></div>
+        <div id="planBox">
+          <div class="paytabs">
+            <button class="paytab active" data-pago="cuotas">Cuotas sin interés</button>
+            <button class="paytab" data-pago="contado">Contado efectivo</button>
+          </div>
+          <div id="cuotasInputs">
+            <div class="field">
+              <label for="entrega">Entrega (USD)</label>
+              <input type="number" id="entrega" min="0" step="500" placeholder="—">
+              <div class="hint" id="entregaHint">Mínimo 50% del precio.</div>
+              <div class="alert" id="entregaAlert">La entrega no puede ser menor al 50%.</div>
+            </div>
+            <div class="field">
+              <label for="cuotas">Cuotas del saldo</label>
+              <input type="number" id="cuotas" min="1" value="36">
+              <div class="hint" id="cuotasHint">Máx. — cuotas, sin interés.</div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="tc">Tipo de cambio (ARS por USD)</label>
+            <input type="number" id="tc" min="0" step="1">
+            <div class="hint">Para calcular los valores en pesos.</div>
+          </div>
+          <div class="summary" id="summary" style="margin-top:22px">
+            <div id="sumCuotas">
+              <div class="line"><span class="lab">Precio de la unidad</span><span class="num" id="sPrecio">—</span></div>
+              <div class="line"><span class="lab">Entrega (<span id="sPct">50</span>%)</span><span class="num" id="sEntrega">—</span></div>
+              <div class="line"><span class="lab">Saldo a financiar (pesos)</span><span class="num" id="sSaldo">—</span></div>
+              <div class="hero-cuota">
+                <div class="lab">Valor de la cuota<b id="sCuotasN">— cuotas</b></div>
+                <div class="big" id="sCuota">—<small id="sCuotaMoneda">ARS</small></div>
+              </div>
+              <div class="deliver"><span class="dot"></span><span>Entrega de obra: <b>junio 2029</b>. Cuotas sin interés, ajustadas por el Índice del Costo de la Construcción (ICC- Cba).</span></div>
+            </div>
+            <div id="sumContado" hidden>
+              <div class="line"><span class="lab">Precio de la unidad</span><span class="num" id="cPrecio">—</span></div>
+              <div class="line"><span class="lab">Descuento contado (<span id="cPct">5</span>%)</span><span class="num" id="cDesc">—</span></div>
+              <div class="line" id="cPesosLine" hidden><span class="lab">Equivalente en pesos</span><span class="num" id="cPesos">—</span></div>
+              <div class="hero-cuota">
+                <div class="lab">Total al contado<b>pago en efectivo</b></div>
+                <div class="big" id="cTotal">—<small id="cMon">USD</small></div>
+              </div>
+              <div class="deliver"><span class="dot"></span><span>Descuento por pago de contado aplicado sobre el precio de lista.</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="plan-note" id="planNote">El plan de pago se habilita al cotizar una unidad disponible.</div>
+      </div>
+
+    </div>
+
+    <!-- ====== Columna planos ====== -->
+    <div class="card planscard">
+      <div class="step"><span class="n">3</span><h2>Planos</h2></div>
+      <div class="placeholder" id="plansPlaceholder">Cotizá una unidad para ver el plano del piso y el de la unidad.</div>
+      <div id="plansBody" style="display:none"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox"><button class="lb-close" id="lbClose" aria-label="Cerrar">×</button><div class="lb-inner" id="lbInner"></div></div>
+
+<footer>
+  <div class="wrap">
+    <div>Valores en <b>dólares (USD)</b>. Lista válida <b id="footMes">marzo 2026</b>.</div>
+    <div>Entrega mínima 50% · Saldo en cuotas sin interés, ajustadas al Índice del Costo de la Construcción (ICC- Cba), hasta la fecha estimada de entrega de obra.</div>
+    <div>Cotización orientativa. No constituye oferta ni reserva. Sujeta a disponibilidad y confirmación comercial.</div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   DATOS — EDITAR ACÁ CADA MES
+   precio en USD · estado:"disponible" | "vendido"
+   planoUnidad: URL del plano de la unidad (opcional)
+   PLANO_PISO: URL del plano de planta por piso (opcional)
+   ============================================================ */
+const LISTA_MES="marzo 2026";
+const ENTREGA_OBRA={anio:2029,mes:6};
+const ENTREGA_MIN_PCT=50;
+const SHEET_ID="1Qvy-KE09P66Lz8xil293iavdLVuGkcPEezVZDKRU63s";
+const SHEET_CSV="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?tqx=out:csv";
+let CONFIG={mes:"marzo 2026",password:"vivra0326",tc:"",descuento:5};
+
+// Planos de planta por piso (vacío = placeholder). Ej: "5":"https://.../piso5.png"
+const PLANO_PISO={};
+
+let UNIDADES=[
+  {piso:"Planta Baja (Av. Pueyrredon)",unidad:"Local 1",tipo:"Local",m2:55.00,orient:"Frente",precio:null,estado:"vendido"},
+  {piso:"Planta Baja (Av. Pueyrredon)",unidad:"C",tipo:"1 Dormitorio",m2:45.45,orient:"Patio privado",precio:90000,estado:"disponible"},
+  {piso:"Planta Baja (Av. Pueyrredon)",unidad:"D",tipo:"1 Dormitorio",m2:45.27,orient:"Patio privado",precio:90000,estado:"disponible"},
+  {piso:"1",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:null,estado:"vendido"},
+  {piso:"1",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:null,estado:"vendido"},
+  {piso:"1",unidad:"C",tipo:"1 Dormitorio",m2:45.45,orient:"Contrafrente",precio:null,estado:"vendido"},
+  {piso:"1",unidad:"D",tipo:"1 Dormitorio",m2:45.27,orient:"Contrafrente",precio:null,estado:"vendido"},
+  {piso:"2",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:null,estado:"vendido"},
+  {piso:"2",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:null,estado:"vendido"},
+  {piso:"2",unidad:"C",tipo:"1 Dormitorio",m2:45.45,orient:"Contrafrente",precio:null,estado:"vendido"},
+  {piso:"2",unidad:"D",tipo:"1 Dormitorio",m2:45.27,orient:"Contrafrente",precio:null,estado:"vendido"},
+  {piso:"3",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:null,estado:"vendido"},
+  {piso:"3",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:null,estado:"vendido"},
+  {piso:"3",unidad:"C",tipo:"1 Dormitorio",m2:45.45,orient:"Contrafrente",precio:null,estado:"vendido"},
+  {piso:"3",unidad:"D",tipo:"1 Dormitorio",m2:45.27,orient:"Contrafrente",precio:null,estado:"vendido"},
+  {piso:"4",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:null,estado:"vendido"},
+  {piso:"4",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:null,estado:"vendido"},
+  {piso:"4",unidad:"C",tipo:"1 Dormitorio",m2:45.45,orient:"Contrafrente",precio:92000,estado:"disponible"},
+  {piso:"4",unidad:"D",tipo:"1 Dormitorio",m2:45.27,orient:"Contrafrente",precio:92000,estado:"disponible"},
+  {piso:"5",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:null,estado:"vendido"},
+  {piso:"5",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:98000,estado:"disponible"},
+  {piso:"5",unidad:"C",tipo:"1 Dormitorio",m2:45.45,orient:"Contrafrente",precio:93000,estado:"disponible"},
+  {piso:"5",unidad:"D",tipo:"1 Dormitorio",m2:45.27,orient:"Contrafrente",precio:93000,estado:"disponible"},
+  {piso:"6",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:100000,estado:"disponible"},
+  {piso:"6",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:100000,estado:"disponible"},
+  {piso:"6",unidad:"C",tipo:"Loft",m2:45.45,orient:"Contrafrente",precio:90000,estado:"disponible"},
+  {piso:"6",unidad:"D",tipo:"Loft",m2:45.27,orient:"Contrafrente",precio:90000,estado:"disponible"},
+  {piso:"7",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:102500,estado:"disponible"},
+  {piso:"7",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:102500,estado:"disponible"},
+  {piso:"7",unidad:"C",tipo:"2 Dormitorios",m2:73.10,orient:"Contrafrente",precio:null,estado:"vendido"},
+  {piso:"8",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:105000,estado:"disponible"},
+  {piso:"8",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:105000,estado:"disponible"},
+  {piso:"8",unidad:"C",tipo:"2 Dormitorios",m2:73.10,orient:"Contrafrente",precio:null,estado:"vendido"},
+  {piso:"9",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:107500,estado:"disponible"},
+  {piso:"9",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:107500,estado:"disponible"},
+  {piso:"9",unidad:"C",tipo:"2 Dormitorios",m2:73.10,orient:"Contrafrente",precio:null,estado:"vendido"},
+  {piso:"10",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:110000,estado:"disponible"},
+  {piso:"10",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:110000,estado:"disponible"},
+  {piso:"10",unidad:"C",tipo:"2 Dormitorios",m2:73.10,orient:"Contrafrente",precio:null,estado:"vendido"},
+  {piso:"11",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:110000,estado:"disponible"},
+  {piso:"11",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:110000,estado:"disponible"},
+  {piso:"11",unidad:"C",tipo:"Loft",m2:36.64,orient:"Contrafrente",precio:82000,estado:"disponible"},
+  {piso:"11",unidad:"D",tipo:"Loft",m2:36.64,orient:"Contrafrente",precio:82000,estado:"disponible"},
+  {piso:"12",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:110000,estado:"disponible"},
+  {piso:"12",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:110000,estado:"disponible"},
+  {piso:"12",unidad:"C",tipo:"Loft",m2:36.64,orient:"Contrafrente",precio:82000,estado:"disponible"},
+  {piso:"12",unidad:"D",tipo:"Loft",m2:36.64,orient:"Contrafrente",precio:82000,estado:"disponible"},
+  {piso:"13",unidad:"A",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:110000,estado:"disponible"},
+  {piso:"13",unidad:"B",tipo:"1 Dormitorio",m2:48.01,orient:"Frente",precio:110000,estado:"disponible"},
+  {piso:"13",unidad:"C",tipo:"Loft",m2:36.64,orient:"Contrafrente",precio:85000,estado:"disponible"},
+  {piso:"13",unidad:"D",tipo:"Loft",m2:36.64,orient:"Contrafrente",precio:85000,estado:"disponible"},
+  {piso:"14",unidad:"A",tipo:"Dúplex 1 Dorm.",m2:61.65,orient:"Frente",precio:128000,estado:"disponible"},
+  {piso:"14",unidad:"B",tipo:"Dúplex 1 Dorm.",m2:60.83,orient:"Frente",precio:128000,estado:"disponible"},
+  {piso:"14",unidad:"C",tipo:"Dúplex 1 Dorm.",m2:60.72,orient:"Frente",precio:128000,estado:"disponible"},
+  {piso:"14",unidad:"D",tipo:"Dúplex 2 Dorm.",m2:83.65,orient:"Contrafrente",precio:148000,estado:"disponible"},
+  {piso:"14",unidad:"E",tipo:"Dúplex 1 Dorm.",m2:58.86,orient:"Contrafrente",precio:125000,estado:"disponible"},
+  {piso:"Planta Baja (Angelo Peredo)",unidad:"Bloque",tipo:"Oficina",m2:228.62,orient:"Frente",precio:315000,estado:"disponible"},
+];
+
+const PISO_LABEL={"14":"Piso 14 y 15 · Dúplex"};
+const pisoLabel=p=>PISO_LABEL[p]||(/^\d+$/.test(p)?("Piso "+p):p);
+const unidadTxt=u=>u.tipo==="Oficina"?"Oficinas (bloque)":(u.tipo==="Local"?u.unidad:("Depto "+u.unidad));
+function tipoFiltro(u){
+  if(u.tipo.startsWith("Dúplex"))return "Dúplex";
+  return u.tipo;
+}
+const letra=u=>u.unidad;
+
+const $=id=>document.getElementById(id);
+const fmt=(n,dec=0)=>n.toLocaleString('es-AR',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+function maxCuotas(){const h=new Date();return Math.max(1,(ENTREGA_OBRA.anio-h.getFullYear())*12+((ENTREGA_OBRA.mes-1)-h.getMonth()));}
+$('footMes').textContent=LISTA_MES;
+
+/* ---------- filtros ---------- */
+const ORDEN_PISO=["PB","1","2","3","4","5","6","7","8","9","10","11","12","13","14-15","OF"];
+const GROUPS=[
+  {key:"tipo",  lab:"Tipo",        vals:["1 Dormitorio","2 Dormitorios","Loft","Dúplex","Local","Oficina"]},
+  {key:"orient",lab:"Orientación", vals:["Frente","Contrafrente","Patio privado"]},
+  {key:"letra", lab:"Letra",       vals:["A","B","C","D"]},
+];
+const filtros={tipo:new Set(),orient:new Set(),letra:new Set()};
+let soloDisp=false;
+const groupsHost=$('filterGroups');
+GROUPS.forEach(g=>{
+  const wrap=document.createElement('div');wrap.className='fgroup';
+  wrap.innerHTML=`<span class="glab">${g.lab}</span>`;
+  const chips=document.createElement('div');chips.className='fchips';
+  g.vals.forEach(v=>{const c=document.createElement('div');c.className='fchip';c.textContent=v;
+    c.onclick=()=>{c.classList.toggle('active');const s=filtros[g.key];s.has(v)?s.delete(v):s.add(v);applyFilters();};chips.appendChild(c);});
+  wrap.appendChild(chips);groupsHost.appendChild(wrap);
+});
+$('soloDisp').onclick=function(){soloDisp=!soloDisp;this.classList.toggle('active',soloDisp);applyFilters();};
+const fToggle=$('filterToggle'),fBody=$('filterBody');
+fToggle.addEventListener('click',()=>{const show=fBody.hasAttribute('hidden');if(show){fBody.removeAttribute('hidden');fToggle.setAttribute('aria-expanded','true');}else{fBody.setAttribute('hidden','');fToggle.setAttribute('aria-expanded','false');}});
+
+function unitPasses(u){
+  if(soloDisp && u.estado!=="disponible")return false;
+  if(filtros.tipo.size && !filtros.tipo.has(tipoFiltro(u)))return false;
+  if(filtros.orient.size && !filtros.orient.has(u.orient))return false;
+  if(filtros.letra.size && !filtros.letra.has(letra(u)))return false;
+  return true;
+}
+const selPiso=$('piso'),selUnidad=$('unidad'),go=$('go');
+function applyFilters(){
+  const matches=UNIDADES.filter(unitPasses);
+  $('count').textContent=`${matches.length} ${matches.length===1?'unidad':'unidades'}`;
+  const pisosOk=[];matches.forEach(u=>{if(!pisosOk.includes(u.piso))pisosOk.push(u.piso);});
+  const prev=selPiso.value;
+  selPiso.innerHTML='<option value="">Seleccioná…</option>';
+  pisosOk.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=pisoLabel(p);selPiso.appendChild(o);});
+  if(pisosOk.includes(prev)){selPiso.value=prev;fillUnidades();}
+  else{selUnidad.innerHTML='<option value="">—</option>';selUnidad.disabled=true;go.disabled=true;resetUnit();}
+}
+function fillUnidades(){
+  selUnidad.innerHTML='<option value="">Seleccioná…</option>';
+  UNIDADES.filter(u=>u.piso===selPiso.value && unitPasses(u)).forEach(u=>{
+    const o=document.createElement('option');o.value=UNIDADES.indexOf(u);o.textContent=unidadTxt(u);selUnidad.appendChild(o);});
+  selUnidad.disabled=!selPiso.value;go.disabled=true;
+}
+selPiso.addEventListener('change',()=>{fillUnidades();resetUnit();});
+selUnidad.addEventListener('change',()=>{go.disabled=!selUnidad.value;resetUnit();});
+go.addEventListener('click',renderUnit);
+$('clearF').onclick=()=>{Object.values(filtros).forEach(s=>s.clear());soloDisp=false;$('soloDisp').classList.remove('active');
+  document.querySelectorAll('.fgroup .fchip.active').forEach(c=>c.classList.remove('active'));applyFilters();};
+
+/* ---------- detalle ---------- */
+let actual=null;
+function resetUnit(){actual=null;$('placeholder').style.display='block';$('unitDetail').style.display='none';$('planNote').textContent='Elegí y cotizá una unidad disponible para armar el plan de pago.';showPlan(false);clearSummary();hidePlans();}
+function showPlan(on){$('planBox').style.display=on?'block':'none';$('planNote').classList.toggle('on',!on);}
+function renderUnit(){
+  const u=UNIDADES[selUnidad.value];
+  if(!u){resetUnit();return;}
+  actual=u;
+  $('placeholder').style.display='none';
+  $('unitDetail').style.display='block';
+  $('chips').innerHTML=`<span class="chip accent">${u.tipo}</span><span class="chip">${u.orient}</span><span class="chip">${pisoLabel(u.piso)}</span>`;
+  $('specs').innerHTML=`<div class="spec"><div class="k">Superficie</div><div class="val">${fmt(u.m2,2)} m²</div></div><div class="spec"><div class="k">Unidad</div><div class="val">${unidadTxt(u)}</div></div>`;
+  renderPlans(u);
+  if(u.estado==="vendido"){
+    $('priceLine').style.display='none';
+    const w=$('stampWrap');w.style.display='block';
+    w.innerHTML=`<div class="stamp-group"><div class="stamp">No disponible</div></div>`;
+    showPlan(false);clearSummary();$('planNote').textContent='El plan de pago no está disponible para una unidad vendida.';return;
+  }
+  $('priceLine').style.display='flex';$('stampWrap').style.display='none';$('stampWrap').innerHTML='';
+  $('precio').textContent=fmt(u.precio);
+  entrega.value=Math.round(u.precio*ENTREGA_MIN_PCT/100);
+  $('entregaHint').textContent=`Mínimo 50% = USD ${fmt(u.precio*ENTREGA_MIN_PCT/100)}.`;
+  showPlan(true);calc();
+}
+
+/* ---------- planos (enlaces de Google Drive) ---------- */
+const PLAN_IDS={
+ "Local":"1igKiQtuYw1MWBMP1rUKlqPJu9qoH7Jsd",
+ "PB C":"1BjcIiyyYKoy4NbRtTcZbverfMC2VAMA1",
+ "PB D":"1q5eUUQgSbt5gQNmmoJXvmqrBvBlgZd1m",
+ "PB OFICINA":"1zy2NmqkT6sf8xd6vcd7fvEBOKhS97S4C",
+ "P01 a P02 Oficinas":"1CpbgNp7PHttxf_X5RCKGwIcoIxSX1hm4",
+ "P03 OFICINAS":"1-2RVjdYIW9gR8I9ozwjiyUdz2-BoW-tb",
+ "P01 A P13 A":"1TnhUL_zyPDTRhAmFkMtXEXtTxe6J8I8w",
+ "P01 A P13 B":"1qHNehFEeumC7nmBAGjB0t6SqEQj1vH92",
+ "P01 a P05 C":"134OKCeewqQzpVPGT7FR-QBZeFkl3eORt",
+ "P01 A P05 D":"1Mo5ajM6wbcAEeCezE9FVG3ZRG3iCfmaH",
+ "P6 C":"1xDTtlDP3xq-hYK5u0uA7p0HedLaf7_bx",
+ "P6 D":"1GBi7UJ-1paMTR4RK_CNg-rNjgJf0K2QT",
+ "P7aP10C":"1gOzZI117b53p5N2Oc77CuDhIbpxvhpJ2",
+ "P11 A P13 C":"1GGffV80QXxrYpJlwgjuGi9Imeoon2oxp",
+ "P11 A P13 D":"1lOhEc2qEt6NTNh7ybZSmG6GVpI0ldOm3",
+ "P14 A":"1zhmLLmY0ze4xKTpFO9Ti9KG3xuc29vX9",
+ "P14 B":"1d-flpDfy5mfEeOzlp7aF-6gLiYChJgSe",
+ "P14 C":"1Dk2q-9GLtnV40YNS6bXVgy2Sw-mNq-iO",
+ "P14 D":"10TLy-UgifEHi1xgB_H6ye7PBPnIdnphQ",
+ "P14 E":"1lQXSXRpVXq3lYGlnK_4eeo2dD-uctyl0",
+ "P15 A":"1n2KI0PRumYcHkAFseXLLCXSJpiXP73K6",
+ "P15 B":"1TfXbhrC6kvMRqq5rXd7cSH3w2U9UFDr8",
+ "P15 C":"1FU1mKUojSP_dec8OdqtTqwlpbdX0LE_Q",
+ "P15 D":"1cYGYe8lfG3lrFqK6s5yXtmLbYRv4LRjX",
+ "P15 E":"1kQPCFrcciAuMeg40sY6NsnRw_9w7bViV",
+};
+const thumb=(id,w)=>`https://drive.google.com/thumbnail?id=${id}&sz=w${w}`;
+function planosDe(u){
+  if(u.tipo==="Local") return [["Plano del local","Local"]];
+  if(u.tipo==="Oficina") return [["Oficinas \u00b7 planta baja","PB OFICINA"],["Oficinas \u00b7 pisos 1 y 2","P01 a P02 Oficinas"],["Oficinas \u00b7 piso 3","P03 OFICINAS"]];
+  if(u.piso==="14") return [["Nivel inferior","P14 "+u.unidad],["Nivel superior","P15 "+u.unidad]];
+  if(u.piso.indexOf("Planta Baja")===0) return [["Plano de la unidad","PB "+u.unidad]];
+  const n=parseInt(u.piso,10), L=u.unidad; let key=null;
+  if(L==="A") key="P01 A P13 A";
+  else if(L==="B") key="P01 A P13 B";
+  else if(L==="C"){ if(n<=5)key="P01 a P05 C"; else if(n===6)key="P6 C"; else if(n<=10)key="P7aP10C"; else key="P11 A P13 C"; }
+  else if(L==="D"){ if(n<=5)key="P01 A P05 D"; else if(n===6)key="P6 D"; else key="P11 A P13 D"; }
+  return key?[["Plano de la unidad",key]]:[];
+}
+let planosActual=[];
+function planPH(label){return `<div class="plan-ph"><div><b>${label}</b>plano no disponible</div></div>`;}
+function hidePlans(){$('plansPlaceholder').style.display='block';$('plansBody').style.display='none';planosActual=[];}
+function renderPlans(u){
+  planosActual=planosDe(u);
+  if(!planosActual.length){hidePlans();return;}
+  $('plansPlaceholder').style.display='none';$('plansBody').style.display='block';
+  $('plansBody').innerHTML=planosActual.map((p,i)=>{
+    const label=p[0], fid=PLAN_IDS[p[1]];
+    const inner=fid?`<img src="${thumb(fid,1600)}" alt="${label}" loading="lazy">`:planPH(label);
+    return `<div class="plan-fig"><div class="plan-cap"><span class="t">${label}</span><button class="zoom" data-i="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 21l-5-5M11 18a7 7 0 100-14 7 7 0 000 14zM11 8v6M8 11h6"/></svg>Ampliar</button></div><div class="plan-img" data-i="${i}">${inner}</div></div>`;
+  }).join('');
+  $('plansBody').querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{img.parentNode.innerHTML=planPH(img.alt);}));
+}
+/* lightbox */
+function openLB(i){
+  const p=planosActual[i]; if(!p)return;
+  const fid=PLAN_IDS[p[1]];
+  $('lbInner').innerHTML=fid?`<img src="${thumb(fid,2000)}" alt="${p[0]}">`:`<div class="lb-ph"><div><b>${p[0]}</b>plano no disponible</div></div>`;
+  $('lightbox').classList.add('on');
+}
+$('plansBody').addEventListener('click',e=>{const el=e.target.closest('[data-i]');if(el)openLB(+el.dataset.i);});
+$('lbClose').onclick=()=>$('lightbox').classList.remove('on');
+$('lightbox').addEventListener('click',e=>{if(e.target===$('lightbox'))$('lightbox').classList.remove('on');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('lightbox').classList.remove('on');});
+
+/* ---------- forma de pago ---------- */
+const entrega=$('entrega'),cuotas=$('cuotas'),tc=$('tc');
+let pago='cuotas';
+entrega.addEventListener('input',calc);cuotas.addEventListener('input',calc);tc.addEventListener('input',calc);
+document.querySelectorAll('.paytab').forEach(b=>b.addEventListener('click',()=>{
+  pago=b.dataset.pago;
+  document.querySelectorAll('.paytab').forEach(x=>x.classList.toggle('active',x===b));
+  $('cuotasInputs').hidden=pago!=='cuotas';
+  $('sumCuotas').hidden=pago!=='cuotas';
+  $('sumContado').hidden=pago!=='contado';
+  calc();
+}));
+function clearSummary(){
+  ['sPrecio','sEntrega','sSaldo'].forEach(i=>$(i).textContent='—');
+  $('sCuota').firstChild.textContent='—';$('sCuotasN').textContent='— cuotas';$('sPct').textContent='50';
+  $('cPrecio').textContent='—';$('cDesc').textContent='—';$('cTotal').firstChild.textContent='—';$('cPesosLine').hidden=true;
+}
+function calc(){
+  if(!actual||actual.estado==="vendido")return;
+  const precio=actual.precio, t=+tc.value||0;
+  if(pago==='contado'){
+    const dpct=CONFIG.descuento||0;
+    $('cPct').textContent=fmt(dpct);
+    const desc=precio*dpct/100, total=precio-desc;
+    $('cPrecio').textContent='USD '+fmt(precio);
+    $('cDesc').textContent='\u2212 USD '+fmt(desc);
+    $('cTotal').firstChild.textContent=fmt(total)+' ';$('cMon').textContent='USD';
+    if(t>0){$('cPesosLine').hidden=false;$('cPesos').textContent='$ '+fmt(total*t);}else{$('cPesosLine').hidden=true;}
+    return;
+  }
+  const mx=maxCuotas();cuotas.max=mx;
+  $('cuotasHint').textContent='Máx. '+mx+' cuotas, sin interés.';
+  if(+cuotas.value>mx)cuotas.value=mx;if(+cuotas.value<1)cuotas.value=1;
+  const minEnt=precio*ENTREGA_MIN_PCT/100, ent=+entrega.value||0, pct=precio?ent/precio*100:0;
+  $('sPct').textContent=fmt(pct);
+  $('sPrecio').textContent='USD '+fmt(precio);
+  $('sEntrega').textContent='USD '+fmt(ent);
+  let err='';
+  if(ent<minEnt)err='La entrega no puede ser menor al 50% (USD '+fmt(minEnt)+').';
+  else if(ent>precio)err='La entrega no puede superar el precio (USD '+fmt(precio)+').';
+  $('entregaAlert').textContent=err;$('entregaAlert').classList.toggle('on',!!err);
+  if(err){$('sSaldo').textContent='—';$('sCuota').firstChild.textContent='—';return;}
+  const saldoUSD=precio-ent, n=Math.max(1,Math.min(mx,+cuotas.value||1));
+  $('sCuotasN').textContent=n+' cuota'+(n>1?'s':'')+' de:';
+  if(t<=0){$('sSaldo').textContent='—';$('sCuota').firstChild.textContent='—';$('sCuotasN').textContent='Ingresá el tipo de cambio';return;}
+  const saldoPesos=saldoUSD*t, cuotaPesos=saldoPesos/n;
+  $('sSaldo').textContent='$ '+fmt(saldoPesos);
+  $('sCuota').firstChild.textContent='$ '+fmt(cuotaPesos)+' ';$('sCuotaMoneda').textContent='ARS';
+}
+
+/* ---------- datos del Google Sheet ---------- */
+function parseCSV(txt){
+  const rows=[];let row=[],cur='',q=false;
+  for(let i=0;i<txt.length;i++){const ch=txt[i];
+    if(q){ if(ch==='"'){ if(txt[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else if(ch==='"') q=true;
+    else if(ch===',') { row.push(cur); cur=''; }
+    else if(ch==='\n'){ row.push(cur); rows.push(row); row=[]; cur=''; }
+    else if(ch!=='\r') cur+=ch;
+  }
+  if(cur!==''||row.length){ row.push(cur); rows.push(row); }
+  return rows;
+}
+function num(x){ if(x==null)return null; x=(''+x).trim(); if(x==='')return null;
+  if(x.indexOf(',')>-1 && x.indexOf('.')>-1) x=x.split('.').join('').replace(',','.');
+  else if(x.indexOf(',')>-1) x=x.replace(',','.');
+  const v=parseFloat(x); return isNaN(v)?null:v; }
+async function cargarSheet(){
+  try{
+    const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),6000);
+    const r=await fetch(SHEET_CSV,{cache:'no-store',signal:ctrl.signal}); clearTimeout(to);
+    if(!r.ok) throw 0;
+    const rows=parseCSV(await r.text());
+    rows.forEach(c=>{ const k=(c[0]||'').trim().toLowerCase().replace(/[\s_]+/g,'');
+      if(k==='mes'&&(c[1]||'').trim()) CONFIG.mes=c[1].trim();
+      else if(k==='password'||k==='contraseña'||k==='contrasena'){ const p=(c[1]||'').trim(); if(p) CONFIG.password=p; }
+      else if(k==='tipodecambio'||k==='tc') CONFIG.tc=(c[1]||'').trim();
+      else if(k.indexOf('descuento')===0){ const d=num(c[1]); if(d!=null) CONFIG.descuento=d; }
+    });
+    const hi=rows.findIndex(c=>(c[0]||'').trim().toLowerCase()==='piso');
+    if(hi>=0){
+      const us=[];
+      for(let i=hi+1;i<rows.length;i++){ const c=rows[i]; if(!c||!(c[0]||'').trim()) continue;
+        us.push({piso:(c[0]||'').trim(),unidad:(c[1]||'').trim(),tipo:(c[2]||'').trim(),m2:num(c[3])||0,orient:(c[4]||'').trim(),precio:num(c[5]),estado:(((c[6]||'').trim().toLowerCase().indexOf('dispon')===0)?'disponible':'vendido')}); }
+      if(us.length) UNIDADES=us;
+    }
+    return true;
+  }catch(e){ return false; }
+}
+function aplicarConfig(){
+  $('footMes').textContent=CONFIG.mes;
+  tc.placeholder=CONFIG.tc||'';
+  $('cPct').textContent=fmt(CONFIG.descuento||0);
+}
+
+/* ---------- contraseña (login) ---------- */
+function abrirApp(){$('gate').hidden=true;}
+function gate(){
+  const inp=$('gatePass'); setTimeout(()=>{try{inp.focus();}catch(e){}},60);
+  const intento=()=>{ if(inp.value.trim()===String(CONFIG.password).trim()) abrirApp(); else { $('gateErr').textContent='Contraseña incorrecta.'; inp.select(); } };
+  $('gateBtn').onclick=intento;
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter') intento(); });
+}
+
+/* ---------- init ---------- */
+gate();                                   // login primero: tapa todo hasta validar
+cuotas.value=maxCuotas(); clearSummary(); applyFilters();   // datos de respaldo (detrás del login)
+cargarSheet().then(()=>{ aplicarConfig(); applyFilters(); });  // Sheet en segundo plano
+</script>
+</body>
+</html>
