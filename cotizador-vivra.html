@@ -184,11 +184,14 @@ select:focus-visible,input:focus-visible,button:focus-visible,.fchip:focus-visib
 <div class="gate" id="gate">
   <div class="gate-box">
     <div class="gv">VIVRA</div><div class="gg">GÜEMES</div>
-    <div class="gate-tag">Acceso privado</div>
-    <p>Ingresá la contraseña para ver el cotizador.</p>
-    <input type="password" id="gatePass" placeholder="Contraseña" autocomplete="off" autofocus>
-    <button id="gateBtn">Entrar</button>
-    <div class="gate-err" id="gateErr"></div>
+    <div id="gateLoad" class="gate-load">Cargando…</div>
+    <div id="gateForm" hidden>
+      <div class="gate-tag">Acceso privado</div>
+      <p>Ingresá la contraseña para ver el cotizador.</p>
+      <input type="password" id="gatePass" placeholder="Contraseña" autocomplete="off">
+      <button id="gateBtn">Entrar</button>
+      <div class="gate-err" id="gateErr"></div>
+    </div>
   </div>
 </div>
 
@@ -340,7 +343,8 @@ const ENTREGA_OBRA={anio:2029,mes:6};
 const ENTREGA_MIN_PCT=50;
 const SHEET_ID="1Qvy-KE09P66Lz8xil293iavdLVuGkcPEezVZDKRU63s";
 const SHEET_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vQUyX-qiTffYYEpg24qid-fA2fc0TqMMJscPPYrZbBu-yedrF6pWkr261ZiYQONi55VKbUQJ6tdapmO/pub?output=csv";
-let CONFIG={mes:"marzo 2026",password:"vivra0326",tc:"",descuento:5};
+let CONFIG={mes:"marzo 2026",passwords:[],tc:"",descuento:5};
+const LOG_URL="";   // URL /exec del Apps Script para registrar accesos (vacío = sin registro)
 
 // Planos de planta por piso (vacío = placeholder). Ej: "5":"https://.../piso5.png"
 const PLANO_PISO={};
@@ -639,7 +643,7 @@ async function cargarSheet(){
     const rows=parseCSV(await r.text());
     rows.forEach(c=>{ const k=(c[0]||'').trim().toLowerCase().replace(/[\s_]+/g,'');
       if(k==='mes'&&(c[1]||'').trim()) CONFIG.mes=c[1].trim();
-      else if(k==='password'||k==='contraseña'||k==='contrasena'){ const p=(c[1]||'').trim(); if(p) CONFIG.password=p; }
+      else if(k==='password'||k==='contraseña'||k==='contrasena'){ const ps=c.slice(1).map(x=>(x||'').trim()).filter(Boolean); if(ps.length) CONFIG.passwords=ps; }
       else if(k==='tipodecambio'||k==='tc') CONFIG.tc=(c[1]||'').trim();
       else if(k.indexOf('descuento')===0){ const d=num(c[1]); if(d!=null) CONFIG.descuento=d; }
     });
@@ -661,17 +665,22 @@ function aplicarConfig(){
 
 /* ---------- contraseña (login) ---------- */
 function abrirApp(){$('gate').hidden=true;}
+function registrarUso(p){ if(!LOG_URL)return; try{ fetch(LOG_URL+'?p='+encodeURIComponent(p)+'&t='+Date.now(),{mode:'no-cors',cache:'no-store'}); }catch(e){} }
 function gate(){
+  $('gateLoad').hidden=true; $('gateForm').hidden=false;
   const inp=$('gatePass'); setTimeout(()=>{try{inp.focus();}catch(e){}},60);
-  const intento=()=>{ if(inp.value.trim()===String(CONFIG.password).trim()) abrirApp(); else { $('gateErr').textContent='Contraseña incorrecta.'; inp.select(); } };
+  const intento=()=>{ const v=inp.value.trim();
+    if(CONFIG.passwords.length && CONFIG.passwords.indexOf(v)>-1){ registrarUso(v); abrirApp(); }
+    else if(!CONFIG.passwords.length){ $('gateErr').textContent='No se pudo cargar la configuración. Recargá la página.'; inp.select(); }
+    else { $('gateErr').textContent='Contraseña incorrecta.'; inp.select(); }
+  };
   $('gateBtn').onclick=intento;
   inp.addEventListener('keydown',e=>{ if(e.key==='Enter') intento(); });
 }
 
 /* ---------- init ---------- */
-gate();                                   // login primero: tapa todo hasta validar
-cuotas.value=maxCuotas(); clearSummary(); applyFilters();   // datos de respaldo (detrás del login)
-cargarSheet().then(()=>{ aplicarConfig(); applyFilters(); });  // Sheet en segundo plano
+cuotas.value=maxCuotas(); clearSummary(); applyFilters();   // datos de respaldo (detrás de la pantalla de carga)
+cargarSheet().then(()=>{ aplicarConfig(); applyFilters(); gate(); });  // al terminar: pide contraseña SOLO si el Sheet la trajo
 </script>
 </body>
 </html>
